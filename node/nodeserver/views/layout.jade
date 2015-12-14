@@ -1,10 +1,48 @@
 doctype html
 html
+  block link
+    -var selected = 'overview'; //default
+  -var menu = { 'overview': '/overview', 'portfolio': '/portfolio', 'analytics': '/analytics', 'export': '/export' };
+
   head
     title= title
     link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
     link(rel='stylesheet', href='/stylesheets/dashboard.css')
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
     script(src='/bootstrap/js/bootstrap.min.js')
+
   body
-    block content
+    // top navbar
+    .navbar.navbar-inverse.navbar-fixed-top(role='navigation')
+      .container-fluid
+        .navbar-header
+          button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand(href='#') #{title}
+        .navbar-collapse.collapse
+          ul.nav.navbar-nav.navbar-right
+            li
+              a(href='/overview') Dashboard
+            li
+              a(href='#') Settings
+            li
+              a(href='#') Profile
+            li
+              a(href='#') Help
+    .container-fluid
+      .row
+        .col-sm-3.col-md-2.sidebar
+          ul.nav.nav-sidebar
+            each val, key in menu
+              if selected === key
+                li.active
+                  a.selected(href=val, title=key)= key
+              else
+                li
+                  a(href=val, title=key)= key
+
+        .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+          block content

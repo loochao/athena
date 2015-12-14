@@ -1,0 +1,43 @@
+extends layout
+
+block link
+  -var selected = 'overview';
+
+block content
+  h1.page-header Dashboard
+    .row.placeholders
+      .col-xs-6.col-sm-3.placeholder
+        img.img-responsive(data-src='holder.js/200x200/auto/sky', alt='Generic placeholder thumbnail')
+        h4 Label
+        span.text-muted Something else
+      .col-xs-6.col-sm-3.placeholder
+        img.img-responsive(data-src='holder.js/200x200/auto/vine', alt='Generic placeholder thumbnail')
+        h4 Label
+        span.text-muted Something else
+      .col-xs-6.col-sm-3.placeholder
+        img.img-responsive(data-src='holder.js/200x200/auto/sky', alt='Generic placeholder thumbnail')
+        h4 Label
+        span.text-muted Something else
+      .col-xs-6.col-sm-3.placeholder
+        img.img-responsive(data-src='holder.js/200x200/auto/vine', alt='Generic placeholder thumbnail')
+        h4 Label
+        span.text-muted Something else
+    h2.sub-header Account Overview
+    .table-responsive
+      table.table.table-striped
+        thead
+          tr
+            th #
+            th Broker
+            th Account Value
+            th Stock Value
+            th Cash
+            th Gain
+        tbody
+          tr
+            td 1
+            td Robinhood
+            td 15,000
+            td 13,000
+            td 2,000
+            td +10%
