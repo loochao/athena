@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  h2.
+    Transaction List
+  table.table.table-striped
+    thead
+      tr
+        th #
+        th Symbol
+        th Type
+        th Price
+        th Shares
+    tbody
+      each transaction, i in transactionlist
+        tr
+          th= i
+          th= transaction.symbol
+          th= transaction.type
+          th= transaction.price
+          th= transaction.shares

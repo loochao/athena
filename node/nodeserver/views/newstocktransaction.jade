@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  form#formAddStockTransaction(name="addstocktransaction", method="post", action="/addstocktransaction")
+    label(for="inputBuy")   Buy
+    input#inputBuy(type="radio", name="type", value="buy", checked=true)
+    label(for="inputSell")   Sell
+    input#inputSell(type="radio", name="type", value="sell", checked=false)
+    input#inputStockSymbol(type="text", placeholder="symbol", name="symbol")
+    input#inputStockPrice(type="text", placeholder="buy/sell price", name="price")
+    input#inputStockShares(type="text", placeholder="number of shares", name="shares")
+    button#btnSubmit(type="submit") submit

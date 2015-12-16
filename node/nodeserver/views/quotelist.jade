@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  h2.
+    Quote List
+  table.table.table-striped
+    thead
+      tr
+        th #
+        th Symbol
+        th Price
+        th Change
+        th Cost
+    tbody
+      each quote, i in quotelist
+        tr
+          th= i
+          th= quote.symbol
+          th= quote.price
+          th= quote.change
+          th= quote.cost

@@ -22,14 +22,38 @@ router.get('/export', function(req, res, next) {
   renderExport(req, res, next);
 });
 
+router.get('/quotelist', function(req, res, next) {
+  renderQuotelist(req, res, next);  
+});
+
 router.get('/userlist', function(req, res) {
   var db = req.db;
   var collection = db.get('usercollection');
   collection.find({}, {}, function(e, docs) {
     res.render('userlist', {
-      "userlist" : docs
+      "userlist" : docs,
+      title : "Athena"
     });
   });
+});
+
+router.get('/transactionlist', function(req, res) {
+  var db = req.db;
+  var collection = db.get('transaction');
+  collection.find({}, {}, function(e, docs) {
+    res.render('transactionlist', {
+      "transactionlist" : docs,
+      title : "Athena"
+    });
+  });
+});
+
+router.get('/newuser', function(req, res) {
+  res.render('newuser', { title: 'Athena' });
+});
+
+router.get('/newstocktransaction', function(req, res) {
+  res.render('newstocktransaction', { title: 'Athena' });
 });
 
 router.post('/adduser', function(req, res) {
@@ -62,8 +86,39 @@ router.post('/adduser', function(req, res) {
   });
 });
 
-router.get('/newuser', function(req, res) {
-  res.render('newuser', { title: 'Athena' });
+
+router.post('/addstocktransaction', function(req, res) {
+  // set internal DB variable
+  var db = req.db;
+
+  // get form values. These rely on the 'name' attribtues
+  var type = req.body.type;
+  var symbol = req.body.symbol;
+  var price = req.body.price;
+  var shares = req.body.shares;
+
+  console.log("type: " + type + " symbol: " + symbol + " price: " + price + " shares: " + shares);
+
+  // set collection
+  var collection = db.get('transaction');
+
+  // submit to the DB
+  collection.insert({
+    'type' : type,
+    'symbol' : symbol,
+    'price' : price,
+    'shares' : shares
+  }, function (err, doc) {
+    if (err) {
+      // if it failed, return error
+      console.log(err);
+      res.send("There was a problem adding the information to the database.");
+    } else {
+      // forward to success page
+      console.log("hello!!");
+      res.redirect("transactionlist");
+    }
+  });
 });
 
 function renderOverview(req, res, next) {
@@ -80,6 +135,19 @@ function renderAnalytics(req, res, next) {
 
 function renderExport(req, res, next) {
   res.render('export', { title: 'Athena' });
+}
+
+function renderQuotelist(req, res, next) {
+  // TODO test only. Remove this later.
+  var quoteList = [
+    { symbol: "AMZN", price: 660.0, change: '2.5%', cost: 570.0 },
+    { symbol: "EA", price: 54.0, change: '1.0%', cost: 47.2 },
+  ];
+
+  res.render('quotelist', {
+    title: 'Athena',
+    quotelist : quoteList
+  });
 }
 
 module.exports = router;
