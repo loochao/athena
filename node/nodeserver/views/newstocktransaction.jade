@@ -2,6 +2,7 @@ extends layout
 
 block content
   form#formAddStockTransaction(name="addstocktransaction", method="post", action="/addstocktransaction")
+    input#inputDate(type="text", placeholder="date", name="date")
     label(for="inputBuy")   Buy
     input#inputBuy(type="radio", name="type", value="buy", checked=true)
     label(for="inputSell")   Sell

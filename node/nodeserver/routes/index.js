@@ -1,3 +1,5 @@
+var SMAASClient = require('../modules/SMAASClient');
+
 var express = require('express');
 var router = express.Router();
 
@@ -92,13 +94,18 @@ router.post('/addstocktransaction', function(req, res) {
   var db = req.db;
 
   // get form values. These rely on the 'name' attribtues
+  var date = req.body.date;
   var type = req.body.type;
   var symbol = req.body.symbol;
   var price = req.body.price;
   var shares = req.body.shares;
 
-  console.log("type: " + type + " symbol: " + symbol + " price: " + price + " shares: " + shares);
+  console.log("date: " + date + " type: " + type + " symbol: " + symbol + " price: " + price + " shares: " + shares);
 
+  SMAASClient.addTransaction(date, type, symbol, price, shares);
+  
+  res.redirect("transactionlist");
+/*
   // set collection
   var collection = db.get('transaction');
 
@@ -119,6 +126,7 @@ router.post('/addstocktransaction', function(req, res) {
       res.redirect("transactionlist");
     }
   });
+  */
 });
 
 function renderOverview(req, res, next) {
