@@ -16,4 +16,6 @@ http_client.notify("add", 3, 4)
 '''
 
 # addTransaction(date, type, symbol, price, shares)
-print http_client.addTransaction("20151216", "buy", "AMZN", "570.2", "20");
+# print http_client.addTransaction("20151216", "buy", "AMZN", "570.2", "20");
+
+print http_client.listAllTransactions();

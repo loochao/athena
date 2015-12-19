@@ -28,6 +28,17 @@ function addTransaction(date, type, symbol, price, shares) {
   });
 }
 
+function listAllTransactions() {
+    var client = new rpc.Client(options);
+    var request = {
+        "jsonrps" : "2.0",
+        "method" : "listAllTransactions",
+        "params" : []
+    };
+    return client.call(request)
+}
+
 module.exports = {
-    addTransaction : addTransaction
+    addTransaction : addTransaction,
+    listAllTransactions : listAllTransactions
 };

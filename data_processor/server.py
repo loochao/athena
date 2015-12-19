@@ -1,5 +1,8 @@
+import json
 import pyjsonrpc
 import pymongo
+from bson import BSON
+from bson import json_util
 
 server_host = 'localhost'
 server_port = 4040
@@ -23,6 +26,11 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
         db.transaction.insert({"date" : date, "type" : type, "symbol" : symbol, "price" : price, "shares" : shares})
         return 'success'
 
+    @pyjsonrpc.rpcmethod
+    def listAllTransactions(self):
+        db = getDB()
+        transactions = list(db.transaction.find())
+        return json.dumps(transactions, sort_keys=True, indent=4, default=json_util.default)
 
 # Threading HTTP-Server
 http_server = pyjsonrpc.ThreadingHttpServer(
