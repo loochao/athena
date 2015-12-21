@@ -6,8 +6,8 @@ def get_db():
     db = client.athena
     return db
 
-def add_country(db):
-    db.countries.insert({"name" : "Canada"})
+def add_transaction(db):
+    db.transaction.insert({"name" : "Canada"})
     
 def get_country(db):
     return db.countries.find_one()

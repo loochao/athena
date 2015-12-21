@@ -42,7 +42,9 @@ router.get('/userlist', function(req, res) {
 router.get('/transactionlist', function(req, res) {
   var transactionlist = SMAASClient.listAllTransactions();
 
-  console.log("transactionlist: " + transactionlist)
+  console.log(transactionlist);
+  
+  //console.log("transactionlist: " + transactionlist)
   res.render('transactionlist', {
       "transactionlist" : transactionlist,
       title : "Athena"

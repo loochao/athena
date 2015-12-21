@@ -22,12 +22,14 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
 
     @pyjsonrpc.rpcmethod
     def addTransaction(self, date, type, symbol, price, shares):
+        print "addTransaction gets called with params: [date : %s, type : %s, symbol : %s, price : %s, shares : %s] " % (str(date), str(type), str(symbol), str(price), str(shares))
         db = getDB()
         db.transaction.insert({"date" : date, "type" : type, "symbol" : symbol, "price" : price, "shares" : shares})
         return 'success'
 
     @pyjsonrpc.rpcmethod
     def listAllTransactions(self):
+        print "listAllTransactions gets called"
         db = getDB()
         transactions = list(db.transaction.find())
         return json.dumps(transactions, sort_keys=True, indent=4, default=json_util.default)
