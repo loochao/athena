@@ -1,6 +1,10 @@
 extends layout
 
+block link
+  -var selected = 'add transaction';
+  
 block content
+  h2 Add New Transaction
   form#formAddStockTransaction(name="addstocktransaction", method="post", action="/addstocktransaction")
     input#inputDate(type="text", placeholder="date", name="date")
     label(for="inputBuy")   Buy

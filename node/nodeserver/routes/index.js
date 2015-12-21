@@ -40,14 +40,12 @@ router.get('/userlist', function(req, res) {
 });
 
 router.get('/transactionlist', function(req, res) {
-  var transactionlist = SMAASClient.listAllTransactions();
-
-  console.log(transactionlist);
-  
-  //console.log("transactionlist: " + transactionlist)
-  res.render('transactionlist', {
-      "transactionlist" : transactionlist,
+  var transactionlist = SMAASClient.listAllTransactions(function(response) {
+    list = JSON.parse(response);
+    res.render('transactionlist', {
+      "transactionlist" : list,
       title : "Athena"
+    });
   });
 });
 
