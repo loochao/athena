@@ -16,8 +16,8 @@ function add(a, b, callback) {
 }
 
 // addTransaction(date, type, symbol, price, shares)
-function addTransaction(date, type, symbol, price, shares) {
-    client.request('addTransaction', [date, type, symbol, price, shares], function(err, error, response) {
+function addTransaction(user, date, type, symbol, price, shares) {
+    client.request('addTransaction', [user, date, type, symbol, price, shares], function(err, error, response) {
         if(err) throw err;
 //        console.log(response);
         return response;
@@ -26,8 +26,8 @@ function addTransaction(date, type, symbol, price, shares) {
 
 
 // listAllTransactions
-function listAllTransactions(callback) {
-    client.request('listAllTransactions', [], function(err, error, response) {
+function listAllTransactions(user, callback) {
+    client.request('listAllTransactions', [user], function(err, error, response) {
         if(err) throw err;
 //        console.log(response);
         callback(response);

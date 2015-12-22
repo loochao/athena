@@ -1,4 +1,4 @@
-var SMAASClient = require('../modules/SMAASClient');
+var PMASClient = require('../modules/PMASClient');
 
 var express = require('express');
 var router = express.Router();
@@ -40,8 +40,8 @@ router.get('/userlist', function(req, res) {
 });
 
 router.get('/transactionlist', function(req, res) {
-  var transactionlist = SMAASClient.listAllTransactions(function(response) {
-    list = JSON.parse(response);
+  var transactionlist = PMASClient.listAllTransactions("Channing", function(response) {
+    var list = JSON.parse(response);
     res.render('transactionlist', {
       "transactionlist" : list,
       title : "Athena"
@@ -98,7 +98,7 @@ router.post('/addstocktransaction', function(req, res) {
 
   console.log("date: " + date + " type: " + type + " symbol: " + symbol + " price: " + price + " shares: " + shares);
 
-  SMAASClient.addTransaction(date, type, symbol, price, shares);
+  PMASClient.addTransaction("Channing", date, type, symbol, price, shares);
   
   res.redirect("transactionlist");
 });
