@@ -1,13 +1,23 @@
 import json
 import pymongo
 import mongoDbClient
+import yahoo_finance_client
 
 from bson import BSON
 from bson import json_util
 
 def addTransaction(user, date, type, symbol, price, shares):
     db = mongoDbClient.getDB()
-    db.transaction.insert({"user" : user, "date" : date, "type" : type, "symbol" : symbol, "price" : price, "shares" : shares})
+    try:
+        if type == "buy":
+            buyStockToPortfolio(user, symbol, price, shares)
+        elif type == "sell":
+            sellStockFromPortfolio(user, symbol, price, shares)
+        db.transaction.insert({"user" : user, "date" : date, "type" : type, "symbol" : symbol, "price" : price, "shares" : shares})
+    except Exception as e:
+        print "Failed to add transaction due to " + str(e)
+        return "error: Failed to add transaction due to " + str(e)
+
     return 'success'
 
 def listAllTransactions(user):
@@ -18,19 +28,109 @@ def listAllTransactions(user):
 
 def getPortfolio(user):
     db = mongoDbClient.getDB()
-    #portfolio = db.getPortfolio().find({ "user" : user })
-    portfolio = list(db.portfolio.find())
+    portfolio = list(db.portfolio.find({ "user" : user }))
     return json.dumps(portfolio, sort_keys=True, indent=4, default=json_util.default)
 
-def addStockToPortfolio(user, symbol, cost, shares):
+def buyStockToPortfolio(user, symbol, cost, shares):
     db = mongoDbClient.getDB()
-    #portfolio = db.portfolio.find({ "user" : user });
-    portfolio = list(db.portfolio.find())
-    if len(portfolio) == 0:
+    portfolio_list = list(db.portfolio.find({ "user" : user }))
+    if len(portfolio_list) == 0:
         # user doesn't own any shares before
-        print "length == 0"
+        new_portfolio = { 
+            "user" : user,
+            "stocks" : [ 
+                { 
+                    "symbol" : symbol, 
+                    "shares" : shares, 
+                    "averageCost" : cost
+                }
+            ]
+        }
+        updated_portfolio = updatePortfolio(new_portfolio)
+        db.portfolio.insert(updated_portfolio)
     else:
-        # user owns some shares
-        print "length > 0"
-    
-addStockToPortfolio("123", "AMZN", "560", "20")
+        portfolio = portfolio_list[0]   # should be only one
+        is_stock_found = False
+        for stock in portfolio["stocks"]:
+            # user owns some shares
+            if stock["symbol"] == symbol:
+                is_stock_found = True
+                cost = convert_to_float(cost)
+                shares = convert_to_float(shares)
+                pre_average_cost = convert_to_float(stock["averageCost"])
+                pre_shares = convert_to_float(stock["shares"])
+                average_cost = (pre_average_cost * pre_shares + cost * shares) / (pre_shares + shares)
+                stock["shares"] = pre_shares + shares
+                stock["averageCost"] = average_cost
+                break
+
+        if is_stock_found == False:
+            portfolio["stocks"].append({
+                "symbol" : symbol,
+                "shares" : shares,
+                "averageCost" : cost
+                })
+
+        updated_portfolio = updatePortfolio(portfolio)
+        db.portfolio.replace_one({ "user" : user }, updated_portfolio)
+
+def sellStockFromPortfolio(user, symbol, sell_price, shares):
+    db = mongoDbClient.getDB()
+    portfolio_list = list(db.portfolio.find({ "user" : user }))
+    if len(portfolio_list) == 0:
+        # user doesn't own any shares before
+        raise Exception("user doesn't own shares of " + symbol)
+    else:
+        portfolio = portfolio_list[0]   # should be only one
+        is_stock_found = False
+        for stock in portfolio["stocks"]:
+            # user owns some shares
+            if stock["symbol"] == symbol:
+                is_stock_found = True
+                sell_shares = convert_to_float(shares)
+                pre_shares = convert_to_float(stock["shares"])
+                if sell_shares > pre_shares:
+                    raise Exception("user doesn't own ENOUGH shares of " + symbol)
+                elif sell_shares < pre_shares:
+                    stock["shares"] = pre_shares - sell_shares
+                else:   # sell all owned shares
+                    portfolio["stocks"].remove(stock)
+                break
+
+        if is_stock_found == False:
+            raise Exception("user doesn't own shares of " + symbol)
+
+        updated_portfolio = updatePortfolio(portfolio)
+        db.portfolio.replace_one({ "user" : user }, updated_portfolio)
+
+def updatePortfolio(portfolio):
+    stocklist = portfolio["stocks"]
+    for stock in stocklist:
+        yahoo_stock_info = yahoo_finance_client.getStockInfo(stock["symbol"])
+        price = convert_to_float(yahoo_stock_info["price"])
+        average_cost = convert_to_float(stock["averageCost"])
+        change = convert_to_float(yahoo_stock_info["change"])
+        shares = convert_to_float(stock["shares"])
+        equity = price * shares
+        total_cost = shares * average_cost
+        total_return_val = equity - total_cost
+        most_recent_day_return_value = shares * change
+
+        stock["price"] = round(price, 2)
+        stock["equity"] = round(equity, 2)
+        stock["mostRecentDayReturnValue"] = round(most_recent_day_return_value, 2)
+        stock["mostRecentDayReturnPercent"] = round(most_recent_day_return_value / total_cost, 2)
+        stock["totalReturnValue"] = round(total_return_val, 2)
+        stock["totalReturnPercent"] = round(total_return_val / total_cost, 2)
+
+    return portfolio
+
+
+def convert_to_float(value):
+    try:
+        return float(value)
+    except:
+        return 0.0
+
+addTransaction("qianmao", "20160101", "buy", "AMZN", "500", "1")
+print getPortfolio("qianmao")
