@@ -99,16 +99,33 @@ router.post('/addstocktransaction', function(req, res) {
   console.log("date: " + date + " type: " + type + " symbol: " + symbol + " price: " + price + " shares: " + shares);
 
   PMASClient.addTransaction("Channing", date, type, symbol, price, shares);
-  
+
   res.redirect("transactionlist");
 });
+
+router.post('/updatePortfolioForUser', function(req, res) {
+  PMASClient.updatePortfolioForUser("Channing", function(response) {
+    res.redirect("portfolio");
+  }); 
+})
 
 function renderOverview(req, res, next) {
   res.render('overview', { title: 'Athena' });
 }
 
 function renderPortfolio(req, res, next) {
-  res.render('portfolio', { title: 'Athena' });
+  PMASClient.getPortfolio("Channing", function(response) {
+    var portfolio;
+    if (response === undefined || response === null) {
+      console.log("Portfolio not found for user");
+    } else {
+      portfolio = JSON.parse(response);
+    }
+    res.render('portfolio', {
+      "portfolio" : portfolio,
+      title : "Athena"
+    });
+  });
 }
 
 function renderAnalytics(req, res, next) {

@@ -9,7 +9,7 @@ var client = jayson.client.http({
 // invoke "add"
 function add(a, b, callback) {
     client.request('add', [a, b], function(err, error, response) {
-        if(err) throw err;
+        if (err) throw err;
 //        console.log(response);
         callback(response);
     });
@@ -18,17 +18,34 @@ function add(a, b, callback) {
 // addTransaction(date, type, symbol, price, shares)
 function addTransaction(user, date, type, symbol, price, shares) {
     client.request('addTransaction', [user, date, type, symbol, price, shares], function(err, error, response) {
-        if(err) throw err;
+        if (err) throw err;
 //        console.log(response);
         return response;
     });
 }
 
-
 // listAllTransactions
 function listAllTransactions(user, callback) {
     client.request('listAllTransactions', [user], function(err, error, response) {
-        if(err) throw err;
+        if (err) throw err;
+//        console.log(response);
+        callback(response);
+    });
+}
+
+// getPortfolio
+function getPortfolio(user, callback) {
+    client.request('getPortfolio', [user], function(err, error, response) {
+        if (err) throw err;
+//        console.log(response);
+        callback(response);
+    });
+}
+
+// updatePortfolioForUser
+function updatePortfolioForUser(user, callback) {
+    client.request('updatePortfolioForUser', [user], function(err, error, response) {
+        if (err) throw err;
 //        console.log(response);
         callback(response);
     });
@@ -50,6 +67,8 @@ var list = listAllTransactions(function(response) {
 
 module.exports = {
     addTransaction : addTransaction,
-    listAllTransactions : listAllTransactions
+    listAllTransactions : listAllTransactions,
+    getPortfolio : getPortfolio,
+    updatePortfolioForUser : updatePortfolioForUser
 };
 

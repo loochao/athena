@@ -4,4 +4,40 @@ block link
   -var selected = 'portfolio';
 
 block content
-    h1 Portfolio
+  h2.
+    Portfolio
+
+  form#formAddStockTransaction(name="addstocktransaction", method="post", action="/updatePortfolioForUser")
+    button.btn.btn-primary(type="submit") Update
+
+  table.table.table-striped
+    thead
+      tr
+        th #
+        th Symbol
+        th Shares
+        th Price
+        th Stop Loss
+        th Equity
+        th Avg Cost
+        th Total Gain
+        th Total Gain %
+        th Last Day Gain
+        th Last Day Gain %
+    tbody
+      - if (typeof(portfolio) !== 'undefined'){
+
+        each stock, i in portfolio.stocks
+          tr
+            th= i
+            th= stock.symbol
+            th= stock.shares
+            th= stock.price
+            th= stock.stopLoss
+            th= stock.equity
+            th= stock.averageCost
+            th= stock.totalReturnValue
+            th= stock.totalReturnPercent
+            th= stock.mostRecentDayReturnValue
+            th= stock.mostRecentDayReturnPercent
+      -}

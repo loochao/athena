@@ -28,8 +28,11 @@ def listAllTransactions(user):
 
 def getPortfolio(user):
     db = mongoDbClient.getDB()
-    portfolio = list(db.portfolio.find({ "user" : user }))
-    return json.dumps(portfolio, sort_keys=True, indent=4, default=json_util.default)
+    portfolio_list = list(db.portfolio.find({ "user" : user }))
+    if len(portfolio_list) > 0:
+        return json.dumps(portfolio_list[0], sort_keys=True, indent=4, default=json_util.default)
+    else:
+        return None
 
 def buyStockToPortfolio(user, symbol, cost, shares):
     db = mongoDbClient.getDB()
@@ -103,6 +106,16 @@ def sellStockFromPortfolio(user, symbol, sell_price, shares):
         updated_portfolio = updatePortfolio(portfolio)
         db.portfolio.replace_one({ "user" : user }, updated_portfolio)
 
+def updatePortfolioForUser(user):
+    db = mongoDbClient.getDB()
+    portfolio_list = list(db.portfolio.find({ "user" : user }))
+    if len(portfolio_list) == 0:
+        # user doesn't have a portfolio
+        print "user doesn't have a portfolio"
+    else:
+        updatePortfolio(portfolio_list[0])   # should be only one
+    return
+
 def updatePortfolio(portfolio):
     stocklist = portfolio["stocks"]
     for stock in stocklist:
@@ -131,6 +144,3 @@ def convert_to_float(value):
         return float(value)
     except:
         return 0.0
-
-addTransaction("qianmao", "20160101", "buy", "AMZN", "500", "1")
-print getPortfolio("qianmao")
