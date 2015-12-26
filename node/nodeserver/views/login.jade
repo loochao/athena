@@ -1,0 +1,17 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/dashboard.css')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
+    script(src='/bootstrap/js/bootstrap.min.js')
+
+  body
+    form.form-signin(action="/login", method="post")
+      h2.form-signin-heading Please sign in
+      input.input-block-level(type="text", name="email", placeholder="Email address")
+      input.input-block-level(type="password", name="password", placeholder="Password")
+      label.checkbox.
+        <input type="checkbox" value="remember-me" /> Remember me
+      button.btn.btn-large.btn-primary(type="submit") Sign in

@@ -2,10 +2,24 @@ var PMASClient = require('../modules/PMASClient');
 
 var express = require('express');
 var router = express.Router();
+var session = require('client-sessions');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   renderOverview(req, res, next);
+});
+
+router.get('/login', function(req, res, next) {
+  res.render('login', {
+    "title" : "Athena"
+  });
+});
+
+router.post('/login', function(req, res, next) {
+  var email = req.body.email;
+  var user = "Channing";
+  req.session.user = user;
+  res.redirect('/overview');
 });
 
 router.get('/overview', function(req, res, next) {
@@ -33,14 +47,15 @@ router.get('/userlist', function(req, res) {
   var collection = db.get('usercollection');
   collection.find({}, {}, function(e, docs) {
     res.render('userlist', {
-      "userlist" : docs,
+      userlist : docs,
       title : "Athena"
     });
   });
 });
 
 router.get('/transactionlist', function(req, res) {
-  var transactionlist = PMASClient.listAllTransactions("Channing", function(response) {
+  var user = checkLoggedIn(req, res);
+  var transactionlist = PMASClient.listAllTransactions(user, function(response) {
     var list = JSON.parse(response);
     res.render('transactionlist', {
       "transactionlist" : list,
@@ -89,6 +104,8 @@ router.post('/adduser', function(req, res) {
 
 
 router.post('/addstocktransaction', function(req, res) {
+  var user = checkLoggedIn(req, res);
+
   // get form values. These rely on the 'name' attribtues
   var date = req.body.date;
   var type = req.body.type;
@@ -104,17 +121,20 @@ router.post('/addstocktransaction', function(req, res) {
 });
 
 router.post('/updatePortfolioForUser', function(req, res) {
+  var user = checkLoggedIn(req, res);
   PMASClient.updatePortfolioForUser("Channing", function(response) {
     res.redirect("portfolio");
   }); 
 })
 
 function renderOverview(req, res, next) {
-  res.render('overview', { title: 'Athena' });
+  var user = checkLoggedIn(req, res);
+  res.render('overview', { title: 'Athena', user : user });
 }
 
 function renderPortfolio(req, res, next) {
-  PMASClient.getPortfolio("Channing", function(response) {
+  var user = checkLoggedIn(req, res);
+  PMASClient.getPortfolio(user, function(response) {
     var portfolio;
     if (response === undefined || response === null) {
       console.log("Portfolio not found for user");
@@ -129,11 +149,13 @@ function renderPortfolio(req, res, next) {
 }
 
 function renderAnalytics(req, res, next) {
-  res.render('analytics', { title: 'Athena' });
+  var user = checkLoggedIn(req, res);
+  res.render('analytics', { title: 'Athena', user : user });
 }
 
 function renderExport(req, res, next) {
-  res.render('export', { title: 'Athena' });
+  var user = checkLoggedIn(req, res);
+  res.render('export', { title: 'Athena', user : user });
 }
 
 function renderQuotelist(req, res, next) {
@@ -147,6 +169,14 @@ function renderQuotelist(req, res, next) {
     title: 'Athena',
     quotelist : quoteList
   });
+}
+
+function checkLoggedIn(req, res) {
+  if (req.session && req.session.user) { // Check if session exist
+    return req.session.user;
+  } else {
+    res.redirect('/login');
+  }
 }
 
 module.exports = router;
