@@ -1,7 +1,0 @@
-extends layout
-
-block content
-  form#formAddUser(name="adduser", method="post", action="/adduser")
-    input#inputUserName(type="text", placeholder="user name", name="username")
-    input#inputUserEmail(type="text", placeholder="user email", name="useremail")
-    button#btnSubmit(type="submit") submit
