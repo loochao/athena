@@ -7,30 +7,49 @@ html
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
     script(src='/bootstrap/js/bootstrap.min.js')
 
+    script(type='text/javascript').
+      function validateForm() {
+        var password1 = document.forms["register-form"]["password"].value;
+        var password2 = document.forms["register-form"]["confirm-password"].value;
+        if (password1 != password2) {
+          var msg_div = document.getElementById("message");
+          msg_div.innerHTML = "Password not match";
+          msg_div.style.visibility = "visible";
+          document.getElementById("password").style.borderColor = "#E34234";
+          document.getElementById("confirm-password").style.borderColor = "#E34234";
+          return false;
+        }
+        return true;
+      }
+
   body
     .container
       .col-md-6.col-md-offset-3
         .login.well
           h1  Welcome aboard!
           hr
-          form(id='register-form', method='POST', action='/register' novalidate)
+          form(id='register-form', name="register-form", onsubmit='return validateForm();', method='POST', action="/register")
             .form-group
               label(for='username') Username
               input(type='text', name='username', class='form-control', 
-                id='username', placeholder='Enter username')
+                id='username', placeholder='Enter username', required)
             .form-group
               label(for='email') Email
               input(type='email', name='email', class='form-control', 
-                id='email', placeholder='Enter email')
+                id='email', placeholder='Enter email', required)
             .form-group
               label(for='password') Password
               input(type='password', name='password', class='form-control', 
-                id='password', placeholder='Enter password')
+                id='password', placeholder='Enter password', required)
             .form-group
               label(for='confirm-password') Confirm Password
               input(type='password', name='confirm-password', class='form-control', 
-                id='confirm-password', placeholder='Confirm password')
+                id='confirm-password', placeholder='Confirm password', required)
             .form-group
               button.btn.btn-primary Register
               &nbsp&nbsp&nbsp&nbsp
-              a(href="login") Or Login
+              a(href="login") or Login
+        - if (message)
+          #message.alert.alert-danger(role="alert") !{message}
+        - else
+          #message.alert.alert-danger(role="alert", style="visibility: hidden;")

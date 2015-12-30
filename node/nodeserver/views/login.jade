@@ -14,9 +14,9 @@ html
         br
         form.form-signin(method="post", action="/login", id="loginForm", style="max-wdith: 300px;")
           .form-group
-            input(class="form-control", id="username", type="text", name="username", placeholder="Enter your username")
+            input(class="form-control", id="username", type="text", name="username", placeholder="Enter your username", required)
           .form-group
-            input(class="form-control", id="password", type="password", name="password", placeholder="Password")
+            input(class="form-control", id="password", type="password", name="password", placeholder="Password", required)
           input(class="btn btn-lg btn-primary btn-block" type="submit", value="Log In")
         br
         - if (message)

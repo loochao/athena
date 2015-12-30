@@ -3,6 +3,7 @@ var PMASClient = require('../modules/PMASClient');
 var express = require('express');
 var router = express.Router();
 var session = require('client-sessions');
+var passwordHash = require('password-hash');
 
 var User = require('../models/user');
 
@@ -23,18 +24,24 @@ router.post('/login', function(req, res, next) {
   var password = req.body.password;
 
   User.find({ username : username }, function(err, users) {
-    var user = users[0];
-    console.log(user);
+    console.log(users);
     if (err) throw err;
-
-    if (user.password === password) {
-      req.session.user = user.username;
-      res.redirect('/overview');
-    } else {
+    if (!users.length) {
       res.render('login', {
-        "title" : "Athena",
-        "message" : "User not found or password incorrectl."
-      });
+        title : "Athena",
+        message : "User not found or password incorrect."
+      })
+    } else {
+      var user = users[0];
+      if (passwordHash.verify(password, user.password)) {
+        req.session.user = user.username;
+        res.redirect('/overview');
+      } else {
+        res.render('login', {
+          title : "Athena",
+          message : "User not found or password incorrect."
+        });
+      }
     }
   });
 });
@@ -107,19 +114,31 @@ router.post('/register', function(req, res) {
   var username = req.body.username;
   var email = req.body.email;
   var password = req.body.password;
+  var hashedPassword = passwordHash.generate(password);
 
-  var newUser = User({
-    username : username,
-    email : email,
-    password : password,
-  });
-  
-  // save the user
-  newUser.save(function(err) {
+  // check if the username is already picked
+  User.find({ username : username }, function(err, users) {
     if (err) throw err;
-    console.log('User created!');
-    req.session.user = username;
-    res.redirect('overview');
+    if (users.length) {
+      console.log("User found for: " + username);
+      res.render('register', {
+        title: 'Athena',
+        message: 'Username is already picked. Please pick a new one.'
+      });
+    } else {
+        var newUser = User({
+          username : username,
+          email : email,
+          password : hashedPassword,
+        });
+        // save the user
+        newUser.save(function(err) {
+          if (err) throw err;
+          console.log('User created!');
+          req.session.user = username;
+          res.redirect('overview');
+        });
+    }
   });
 
 });

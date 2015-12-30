@@ -16,6 +16,7 @@
     "morgan" : "~1.6.1",
     "mongoose" : "~4.3.4",
     "node-json-rpc" : "~0.0.1",
+    "password-hash" : "~1.2.2",
     "serve-favicon": "~2.3.0"
   }
 }
