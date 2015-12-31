@@ -5,13 +5,46 @@ block link
   
 block content
   h2 Add New Transaction
-  form#formAddStockTransaction(name="addstocktransaction", method="post", action="/addstocktransaction")
-    input#inputDate(type="text", placeholder="date", name="date")
-    label(for="inputBuy")   Buy
-    input#inputBuy(type="radio", name="type", value="buy", checked=true)
-    label(for="inputSell")   Sell
-    input#inputSell(type="radio", name="type", value="sell", checked=false)
-    input#inputStockSymbol(type="text", placeholder="symbol", name="symbol")
-    input#inputStockPrice(type="text", placeholder="buy/sell price", name="price")
-    input#inputStockShares(type="text", placeholder="number of shares", name="shares")
-    button#btnSubmit(type="submit") submit
+  .container
+      .col-md-8.col-md-offset-2
+        h2  New Transaction
+        hr
+        form(class='form-horizontal', id='addStockTransaction-form', name="addstocktransaction-form", onsubmit='return validateForm();', method='POST', action="/addstocktransaction")
+          .form-group
+            label(class='col-md-4 control-label', for='date') Date
+            .col-md-4
+              input(type='text', name='date', class='form-control input-md', id='datepicker', placeholder='date', required)
+          .form-group
+            label(class='col-md-4 control-label', for='type') Type
+            .col-md-4
+              input(type='radio', name='type', id='radio-buy', value='buy', checked=true)
+              label(class='radio-inline', for='radio-buy') buy
+              &nbsp&nbsp
+              input(type='radio', name='type', id='radio-sell', value='sell', checked=false)
+              label(class='radio-inline', for='radio-sell') sell
+          .form-group
+            label(class='col-md-4 control-label', for='symbol') Symbol
+            .col-md-4
+              input(type='test', name='symbol', class='form-control', id='symbol', placeholder='symbol', required)
+          .form-group
+            label(class='col-md-4 control-label', for='price') Price
+            .col-md-4
+              input(type='text', name='price', class='form-control', id='price', placeholder='buy/sell price', required)
+          .form-group
+            label(class='col-md-4 control-label', for='shares') Shares
+            .col-md-4
+              input(type='text', name='shares', class='form-control', id='shares', placeholder='number of shares', required)
+          .form-group
+            label(class='col-md-4 control-label')
+            .col-md-4
+              button.btn.btn-primary Submit
+
+      - if (message)
+        #message.alert.alert-danger(role="alert") !{message}
+      - else
+        #message.alert.alert-danger(role="alert", style="visibility: hidden;")
+
+  script.
+    $(function() {
+      $( "#datepicker" ).datepicker();
+    });

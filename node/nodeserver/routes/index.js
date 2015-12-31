@@ -155,9 +155,9 @@ router.post('/addstocktransaction', function(req, res) {
 
   console.log("date: " + date + " type: " + type + " symbol: " + symbol + " price: " + price + " shares: " + shares);
 
-  PMASClient.addTransaction(user, date, type, symbol, price, shares);
-
-  res.redirect("transactionlist");
+  PMASClient.addTransaction(user, date, type, symbol, price, shares, function(response) {
+      res.redirect("transactionlist");
+  });
 });
 
 router.post('/updatePortfolioForUser', function(req, res) {

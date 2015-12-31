@@ -16,11 +16,11 @@ function add(a, b, callback) {
 }
 
 // addTransaction(date, type, symbol, price, shares)
-function addTransaction(user, date, type, symbol, price, shares) {
+function addTransaction(user, date, type, symbol, price, shares, callback) {
     client.request('addTransaction', [user, date, type, symbol, price, shares], function(err, error, response) {
         if (err) throw err;
 //        console.log(response);
-        return response;
+        callback(response);
     });
 }
 
