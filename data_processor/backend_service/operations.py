@@ -22,8 +22,7 @@ def addTransaction(user, date, type, symbol, price, shares):
 
 def listAllTransactions(user):
     db = mongoDbClient.getDB()
-    #transactions = list(db.transaction.find({ "user" : user}))
-    transactions = list(db.transaction.find())
+    transactions = list(db.transaction.find({ "user" : user}))
     return json.dumps(transactions, sort_keys=True, indent=4, default=json_util.default)
 
 def getPortfolio(user):
