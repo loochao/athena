@@ -26,7 +26,7 @@ router.post('/login', function(req, res, next) {
   User.find({ username : username }, function(err, users) {
     console.log(users);
     if (err) throw err;
-    if (!users.length) {
+    if (users.length) {
       res.render('login', {
         title : "Athena",
         message : "User not found or password incorrect."
@@ -119,7 +119,7 @@ router.post('/register', function(req, res) {
   // check if the username is already picked
   User.find({ username : username }, function(err, users) {
     if (err) throw err;
-    if (users.length) {
+    if (users) {
       console.log("User found for: " + username);
       res.render('register', {
         title: 'Athena',
@@ -156,7 +156,7 @@ router.post('/addstocktransaction', function(req, res) {
   console.log("date: " + date + " type: " + type + " symbol: " + symbol + " price: " + price + " shares: " + shares);
 
   PMASClient.addTransaction(user, date, type, symbol, price, shares, function(response) {
-      res.redirect("transactionlist");
+    res.redirect("transactionlist");
   });
 });
 
