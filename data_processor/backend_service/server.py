@@ -19,14 +19,14 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
         return a + b
 
     @pyjsonrpc.rpcmethod
-    def addTransaction(self, user, date, type, symbol, price, shares):
-        print "addTransaction gets called with params: [user : %s, date : %s, type : %s, symbol : %s, price : %s, shares : %s] " % (str(user), str(date), str(type), str(symbol), str(price), str(shares))
-        return operations.addTransaction(user, date, type, symbol, price, shares)
+    def addTransaction(self, user, account, date, type, symbol, price, shares):
+        print "addTransaction gets called with params: [user : %s, account : %s, date : %s, type : %s, symbol : %s, price : %s, shares : %s] " % (str(user), str(account), str(date), str(type), str(symbol), str(price), str(shares))
+        return operations.addTransaction(user, account, date, type, symbol, price, shares)
 
     @pyjsonrpc.rpcmethod
-    def listAllTransactions(self, user):
-        print "listAllTransactions gets called for user: %s" % str(user)
-        return operations.listAllTransactions(user)
+    def listAllTransactions(self, user, account):
+        print "listAllTransactions gets called for user: %s account: %s" % str(user, account)
+        return operations.listAllTransactions(user, account)
 
     @pyjsonrpc.rpcmethod
     def getPortfolio(self, user):

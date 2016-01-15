@@ -16,8 +16,8 @@ function add(a, b, callback) {
 }
 
 // addTransaction(date, type, symbol, price, shares)
-function addTransaction(user, date, type, symbol, price, shares, callback) {
-    client.request('addTransaction', [user, date, type, symbol, price, shares], function(err, error, response) {
+function addTransaction(user, account, date, type, symbol, price, shares, callback) {
+    client.request('addTransaction', [user, account, date, type, symbol, price, shares], function(err, error, response) {
         if (err) throw err;
 //        console.log(response);
         callback(response);
@@ -25,8 +25,8 @@ function addTransaction(user, date, type, symbol, price, shares, callback) {
 }
 
 // listAllTransactions
-function listAllTransactions(user, callback) {
-    client.request('listAllTransactions', [user], function(err, error, response) {
+function listAllTransactions(user, account, callback) {
+    client.request('listAllTransactions', [user, account], function(err, error, response) {
         if (err) throw err;
 //        console.log(response);
         callback(response);
@@ -51,6 +51,7 @@ function updatePortfolioForUser(user, callback) {
     });
 }
 
+function 
 // Test
 //var list = listAllTransactions();
 //console.log(list);

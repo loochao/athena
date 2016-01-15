@@ -30,7 +30,7 @@ router.post('/login', function(req, res, next) {
       res.render('login', {
         title : "Athena",
         message : "User not found or password incorrect."
-      })
+      });
     } else {
       var user = users[0];
       if (passwordHash.verify(password, user.password)) {
@@ -92,7 +92,7 @@ router.get('/quotelist', function(req, res, next) {
 
 router.get('/transactionlist', function(req, res) {
   var user = checkLoggedIn(req, res);
-  var transactionlist = PMASClient.listAllTransactions(user, function(response) {
+  PMASClient.listAllTransactions(user, function(response) {
     var list = JSON.parse(response);
     res.render('transactionlist', {
       "transactionlist" : list,
@@ -165,7 +165,7 @@ router.post('/updatePortfolioForUser', function(req, res) {
   PMASClient.updatePortfolioForUser(user, function(response) {
     res.redirect("portfolio");
   }); 
-})
+});
 
 function checkLoggedIn(req, res) {
   if (req.session && req.session.user) { // Check if session exist

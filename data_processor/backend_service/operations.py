@@ -6,23 +6,23 @@ import yahoo_finance_client
 from bson import BSON
 from bson import json_util
 
-def addTransaction(user, date, type, symbol, price, shares):
+def addTransaction(user, account, date, type, symbol, price, shares):
     db = mongoDbClient.getDB()
     try:
         if type == "buy":
-            buyStockToPortfolio(user, symbol, price, shares)
+            buyStockToPortfolio(user, account, symbol, price, shares)
         elif type == "sell":
-            sellStockFromPortfolio(user, symbol, price, shares)
-        db.transaction.insert({"user" : user, "date" : date, "type" : type, "symbol" : symbol, "price" : price, "shares" : shares})
+            sellStockFromPortfolio(user, account, symbol, price, shares)
+        db.transaction.insert({"user" : user, "account" : account, "date" : date, "type" : type, "symbol" : symbol, "price" : price, "shares" : shares})
     except Exception as e:
         print "Failed to add transaction due to " + str(e)
         return "error: Failed to add transaction due to " + str(e)
 
     return 'success'
 
-def listAllTransactions(user):
+def listAllTransactions(user, account):
     db = mongoDbClient.getDB()
-    transactions = list(db.transaction.find({ "user" : user}))
+    transactions = list(db.transaction.find({ "user" : user, "account" : account }))
     return json.dumps(transactions, sort_keys=True, indent=4, default=json_util.default)
 
 def getPortfolio(user):
@@ -33,13 +33,14 @@ def getPortfolio(user):
     else:
         return None
 
-def buyStockToPortfolio(user, symbol, cost, shares):
+def buyStockToPortfolio(user, account, symbol, cost, shares):
     db = mongoDbClient.getDB()
-    portfolio_list = list(db.portfolio.find({ "user" : user }))
+    portfolio_list = list(db.portfolio.find({ "user" : user, "account" : account }))
     if len(portfolio_list) == 0:
         # user doesn't own any shares before
         new_portfolio = { 
             "user" : user,
+            "account" : account,
             "stocks" : [ 
                 { 
                     "symbol" : symbol, 
@@ -74,14 +75,14 @@ def buyStockToPortfolio(user, symbol, cost, shares):
                 })
 
         updated_portfolio = updatePortfolio(portfolio)
-        db.portfolio.replace_one({ "user" : user }, updated_portfolio)
+        db.portfolio.replace_one({ "user" : user, "account" : account }, updated_portfolio)
 
-def sellStockFromPortfolio(user, symbol, sell_price, shares):
+def sellStockFromPortfolio(user, account, symbol, sell_price, shares):
     db = mongoDbClient.getDB()
-    portfolio_list = list(db.portfolio.find({ "user" : user }))
+    portfolio_list = list(db.portfolio.find({ "user" : user, "account" : account }))
     if len(portfolio_list) == 0:
         # user doesn't own any shares before
-        raise Exception("user doesn't own shares of " + symbol)
+        raise Exception("user/account doesn't own shares of " + symbol)
     else:
         portfolio = portfolio_list[0]   # should be only one
         is_stock_found = False
@@ -100,10 +101,10 @@ def sellStockFromPortfolio(user, symbol, sell_price, shares):
                 break
 
         if is_stock_found == False:
-            raise Exception("user doesn't own shares of " + symbol)
+            raise Exception("user/account doesn't own shares of " + symbol)
 
         updated_portfolio = updatePortfolio(portfolio)
-        db.portfolio.replace_one({ "user" : user }, updated_portfolio)
+        db.portfolio.replace_one({ "user" : user, "account" : account }, updated_portfolio)
 
 def updatePortfolioForUser(user):
     db = mongoDbClient.getDB()
