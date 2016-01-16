@@ -51,7 +51,6 @@ function updatePortfolioForUser(user, callback) {
     });
 }
 
-function 
 // Test
 //var list = listAllTransactions();
 //console.log(list);

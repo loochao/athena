@@ -26,7 +26,7 @@ router.post('/login', function(req, res, next) {
   User.find({ username : username }, function(err, users) {
     console.log(users);
     if (err) throw err;
-    if (users.length) {
+    if (!users.length) {
       res.render('login', {
         title : "Athena",
         message : "User not found or password incorrect."
