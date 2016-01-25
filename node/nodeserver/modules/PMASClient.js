@@ -6,7 +6,6 @@ var client = jayson.client.http({
   hostname: 'localhost'
 });
 
-// invoke "add"
 function add(a, b, callback) {
     client.request('add', [a, b], function(err, error, response) {
         if (err) throw err;
@@ -15,7 +14,22 @@ function add(a, b, callback) {
     });
 }
 
-// addTransaction(date, type, symbol, price, shares)
+function listAccounts(user, callback) {
+    client.request('listAccounts', [user], function(err, error, response) {
+        if (err) throw err;
+//        console.log(response);
+        callback(response);
+    });
+}
+
+function addAccount(user, account, callback) {
+    client.request('addAccount', [user, account], function(err, error, response) {
+        if (err) throw err;
+//        console.log(response);
+        callback(response);
+    });
+}
+
 function addTransaction(user, account, date, type, symbol, price, shares, callback) {
     client.request('addTransaction', [user, account, date, type, symbol, price, shares], function(err, error, response) {
         if (err) throw err;
@@ -24,16 +38,22 @@ function addTransaction(user, account, date, type, symbol, price, shares, callba
     });
 }
 
-// listAllTransactions
-function listAllTransactions(user, account, callback) {
-    client.request('listAllTransactions', [user, account], function(err, error, response) {
+function listAllTransactions(user, callback) {
+    client.request('listAllTransactions', [user], function(err, error, response) {
         if (err) throw err;
 //        console.log(response);
         callback(response);
     });
 }
 
-// getPortfolio
+function listTransactionsByAccount(user, account, callback) {
+    client.request('listTransactionsByAccount', [user, account], function(err, error, response) {
+        if (err) throw err;
+//        console.log(response);
+        callback(response);
+    });
+}
+
 function getPortfolio(user, callback) {
     client.request('getPortfolio', [user], function(err, error, response) {
         if (err) throw err;
@@ -42,7 +62,6 @@ function getPortfolio(user, callback) {
     });
 }
 
-// updatePortfolioForUser
 function updatePortfolioForUser(user, callback) {
     client.request('updatePortfolioForUser', [user], function(err, error, response) {
         if (err) throw err;
@@ -68,7 +87,10 @@ var list = listAllTransactions(function(response) {
 module.exports = {
     addTransaction : addTransaction,
     listAllTransactions : listAllTransactions,
+    listTransactionsByAccount : listTransactionsByAccount,
     getPortfolio : getPortfolio,
-    updatePortfolioForUser : updatePortfolioForUser
+    updatePortfolioForUser : updatePortfolioForUser,
+    listAccounts : listAccounts,
+    addAccount : addAccount
 };
 

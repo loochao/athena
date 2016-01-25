@@ -11,6 +11,13 @@ block content
         hr
         form(class='form-horizontal', id='addStockTransaction-form', name="addstocktransaction-form", onsubmit='return validateForm();', method='POST', action="/addstocktransaction")
           .form-group
+            label(class='col-md-4 control-label', for='date') Account
+            .col-md-4
+              select(type='button', name='account', class="form-control", id="accountDropdownMenu") Select Accounts
+                each account in accounts
+                  option(value=account)= account
+
+          .form-group
             label(class='col-md-4 control-label', for='date') Date
             .col-md-4
               input(type='text', name='date', class='form-control input-md', id='datepicker', placeholder='date', required)
@@ -48,3 +55,5 @@ block content
     $(function() {
       $( "#datepicker" ).datepicker();
     });
+
+

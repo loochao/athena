@@ -20,7 +20,12 @@ def addTransaction(user, account, date, type, symbol, price, shares):
 
     return 'success'
 
-def listAllTransactions(user, account):
+def listAllTransactions(user):
+    db = mongoDbClient.getDB()
+    transactions = list(db.transaction.find({ "user" : user }))
+    return json.dumps(transactions, sort_keys=True, indent=4, default=json_util.default)
+
+def listAllTransactionsByAccount(user, account):
     db = mongoDbClient.getDB()
     transactions = list(db.transaction.find({ "user" : user, "account" : account }))
     return json.dumps(transactions, sort_keys=True, indent=4, default=json_util.default)
@@ -138,6 +143,18 @@ def updatePortfolio(portfolio):
 
     return portfolio
 
+def listAccounts(user):
+    db = mongoDbClient.getDB()
+    accounts = list(db.accounts.find({ "user" : user }))
+    return json.dumps(accounts, sort_keys=True, indent=4, default=json_util.default)
+
+def addAccount(user, account):
+    db = mongoDbClient.getDB()
+    new_account = {
+        "user" : user,
+        "account" : account
+    }
+    db.accounts.insert(new_account)
 
 def convert_to_float(value):
     try:

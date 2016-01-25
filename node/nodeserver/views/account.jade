@@ -1,0 +1,35 @@
+extends layout
+
+block link
+  -var selected = 'account';
+
+block content
+  h2.
+    Account
+
+  table.table.table-striped
+    thead
+      tr
+        th #
+        th Account
+        th Value
+        th Total Gain
+        th Total Gain %
+        th Last Day Gain
+        th Last Day Gain %
+    tbody
+      - if (typeof(accounts) !== 'undefined'){
+
+        each account, i in accounts
+          tr
+            th= i
+            th= account.account
+      -}
+
+  form.form-inline(method="post", action="/addAccount", id="accountForm")
+    .form-group
+      label(for='account') account
+      &nbsp&nbsp
+      input(type='text', name='account', class='form-control', id='account', placeholder='Account Name', required)
+      &nbsp&nbsp
+      button.btn.btn-primary Submit

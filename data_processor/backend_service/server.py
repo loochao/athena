@@ -24,9 +24,14 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
         return operations.addTransaction(user, account, date, type, symbol, price, shares)
 
     @pyjsonrpc.rpcmethod
-    def listAllTransactions(self, user, account):
-        print "listAllTransactions gets called for user: %s account: %s" % str(user, account)
-        return operations.listAllTransactions(user, account)
+    def listAllTransactions(self, user):
+        print "listAllTransactions gets called for user: %s" % str(user)
+        return operations.listAllTransactions(user)
+
+    @pyjsonrpc.rpcmethod
+    def listTransactionsByAccount(self, user, account):
+        print "listAllTransactions gets called for user: %s, account: %s" % (str(user), str(account))
+        return operations.listAllTransactionsByAccount(user, account)
 
     @pyjsonrpc.rpcmethod
     def getPortfolio(self, user):
@@ -38,6 +43,16 @@ class RequestHandler(pyjsonrpc.HttpRequestHandler):
         print "updatePortfolio get called for user: %s" % str(user)
         operations.updatePortfolioForUser(user)
         return "success"
+
+    @pyjsonrpc.rpcmethod
+    def listAccounts(self, user):
+        print "listAccounts get called for user: %s" % str(user)
+        return operations.listAccounts(user)
+
+    @pyjsonrpc.rpcmethod
+    def addAccount(self, user, account):
+        print "addAccount get called for user: %s and account: %s" % (str(user), str(account))
+        return operations.addAccount(user, account)
 
 # Threading HTTP-Server
 http_server = pyjsonrpc.ThreadingHttpServer(

@@ -51,6 +51,36 @@ router.get('/overview', function(req, res, next) {
   res.render('overview', { title: 'Athena', user : user });
 });
 
+router.get('/account', function(req, res, next) {
+  var user = checkLoggedIn(req, res);
+  PMASClient.listAccounts(user, function(response) {
+    var accounts;
+    if (response === undefined || response === null) {
+      console.log("Accounts not found for user");
+    } else {
+      accounts = JSON.parse(response);
+    }
+    res.render('account', 
+      {
+        title: 'Athena',
+        user : user,
+        'accounts' : accounts,
+      });
+  });
+});
+
+router.post('/addAccount', function(req, res, next) {
+  var user = checkLoggedIn(req, res);
+
+  var account = req.body.account;
+
+  console.log("user: " + user + " account: " + account);
+
+  PMASClient.addAccount(user, account, function(response) {
+    res.redirect("account");
+  });
+});
+
 router.get('/portfolio', function(req, res, next) {
   var user = checkLoggedIn(req, res);
   PMASClient.getPortfolio(user, function(response) {
@@ -106,7 +136,18 @@ router.get('/register', function(req, res) {
 });
 
 router.get('/newstocktransaction', function(req, res) {
-  res.render('newstocktransaction', { title: 'Athena' });
+  var user = checkLoggedIn(req, res);
+  PMASClient.listAccounts(user, function(response) {
+    var accounts_list = JSON.parse(response);
+    var accounts = []
+    for (var i = 0; i < accounts_list.length; i++) {
+      accounts.push(accounts_list[i]['account'])
+    }
+    res.render('newstocktransaction', {
+      title: 'Athena',
+      'accounts' : accounts
+    });
+  });
 });
 
 router.post('/register', function(req, res) {
