@@ -188,15 +188,16 @@ router.post('/addstocktransaction', function(req, res) {
   var user = checkLoggedIn(req, res);
 
   // get form values. These rely on the 'name' attribtues
+  var account = req.body.account;
   var date = req.body.date;
   var type = req.body.type;
   var symbol = req.body.symbol;
   var price = req.body.price;
   var shares = req.body.shares;
 
-  console.log("date: " + date + " type: " + type + " symbol: " + symbol + " price: " + price + " shares: " + shares);
+  console.log("account: " + account, "date: " + date + " type: " + type + " symbol: " + symbol + " price: " + price + " shares: " + shares);
 
-  PMASClient.addTransaction(user, date, type, symbol, price, shares, function(response) {
+  PMASClient.addTransaction(user, account, date, type, symbol, price, shares, function(response) {
     res.redirect("transactionlist");
   });
 });
